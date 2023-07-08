@@ -7,60 +7,144 @@
  * This component is doing too much. It is fetching data, parsing data, and rendering data.
  */
 
-import { useEffect, useState } from 'react'
-import { User } from '../types'
+import Image from 'next/image'
+import { useCallback, useEffect, useReducer, useState } from 'react'
+import { LinkHeader, User } from '../types'
+
+function parseLinkHeader(header: string): LinkHeader {
+  if (!header) {
+    return {}
+  }
+
+  const parts = header.split(',')
+  const links: Record<string, string> = {}
+
+  for (const part of parts) {
+    const section = part.split(';')
+
+    if (section.length !== 2) {
+      throw new Error('section could not be split on ";"')
+    }
+
+    const url = section[0].replace(/<(.*)>/, '$1').trim()
+    const name = section[1].replace(/rel="(.*)"/, '$1').trim()
+
+    links[name] = url
+  }
+
+  return links
+}
+
+const paginationReducer = (
+  state: { page: number; search: string },
+  action: { type: 'next' | 'search'; payload?: string },
+) => {
+  switch (action.type) {
+    case 'next':
+      return { ...state, page: state.page + 1 }
+    case 'search':
+      return { ...state, page: 1, search: action.payload ?? '' }
+    default:
+      throw new Error('Invalid action type')
+  }
+}
 
 const Page = () => {
   const [users, setUsers] = useState<User[]>([])
+
+  const [pagination, dispatchPagination] = useReducer(paginationReducer, {
+    page: 1,
+    search: '',
+  })
+
   const [search, setSearch] = useState('')
+  const [page, setPage] = useState(1)
+  const [hasNextPage, setHasNextPage] = useState(false)
+
+  const fetchUsers = useCallback(async () => {
+    const { page, search } = pagination
+
+    const url = `http://localhost:3001/users?_sort=name&_page=${page}&name_like=${search}`
+
+    const response = await fetch(url)
+    const fetchedUsers: User[] = await response.json()
+    const linkHeader = parseLinkHeader(response.headers.get('Link') ?? '')
+
+    setUsers((currentUsers) => {
+      if (page === 1) return fetchedUsers
+
+      return [...currentUsers, ...fetchedUsers]
+    })
+
+    if (page > 1) {
+      setTimeout(() => {
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: 'smooth',
+        })
+      }, 10)
+    }
+
+    setHasNextPage(!!linkHeader.next)
+  }, [pagination])
 
   useEffect(() => {
-    fetch('http://localhost:3001/users')
-      .then((response) => response.json())
-      .then((users: User[]) => setUsers(users))
-  }, [])
+    fetchUsers()
+  }, [fetchUsers])
 
   return (
-    <main className="bg-slate-50 p-6">
-      <div className="mx-auto max-w-[800px]">
-        <h1 className="mb-4 text-lg font-bold">Users</h1>
-        <div className="mb-4">
+    <main className="min-h-screen bg-slate-50 px-6">
+      <div className="relative mx-auto max-w-[800px]">
+        <header className="sticky top-0 flex flex-col gap-4 bg-gradient-to-b from-slate-50 from-60% pb-6 pt-4">
+          <h1 className="text-lg font-bold">Users</h1>
           <input
             name="search"
             type="search"
             placeholder="Search"
             onChange={(event) => {
-              setSearch(event.target.value)
+              dispatchPagination({
+                type: 'search',
+                payload: event.target.value,
+              })
             }}
-            className="w-full rounded border border-slate-300 p-2 placeholder:text-slate-300 focus:border-purple-500"
+            className="w-full rounded border border-slate-200 bg-white/90 p-2 outline-none placeholder:text-slate-300 focus:outline-slate-300"
           />
-        </div>
-        <div className="flex flex-col gap-1">
-          {users
-            .filter((user) => {
-              const searchText = search.toLocaleLowerCase()
-
-              if (!searchText) {
-                return true
-              }
-
-              return (
-                user.firstName.toLocaleLowerCase().includes(search) ||
-                user.lastName.toLocaleLowerCase().includes(search)
-              )
-            })
-            .map((user) => (
-              <div
-                key={user.id}
-                className="flex flex-col gap-2 rounded-md border border-slate-100 bg-white p-4"
-              >
-                <div>
-                  {user.firstName} {user.lastName}
-                </div>
-                <div>{user.email}</div>
+        </header>
+        <div className="flex flex-col gap-2">
+          {users.map((user) => (
+            <div
+              key={user.id}
+              className="flex flex-row items-center gap-4 rounded-md bg-white p-4 shadow-sm shadow-slate-200"
+            >
+              <div className="h-12 w-12 rounded-full border-4 border-slate-300 bg-slate-100">
+                <Image
+                  src={user.image}
+                  alt={user.name}
+                  width={48}
+                  height={48}
+                  className="h-full w-full rounded-full"
+                />
               </div>
-            ))}
+              <div className="flex flex-col">
+                <h4 className="text-sm font-bold">{user.name}</h4>
+                <p className="text-sm text-slate-500">{user.email}</p>
+              </div>
+            </div>
+          ))}
         </div>
+        {hasNextPage && (
+          <div className="sticky bottom-0 flex flex-row items-center justify-center bg-gradient-to-t from-slate-50 from-20% py-4">
+            <button
+              type="button"
+              className="rounded-md bg-emerald-500 px-4 py-2 text-slate-50 hover:bg-emerald-700"
+              onClick={() => {
+                dispatchPagination({ type: 'next' })
+              }}
+            >
+              Load more
+            </button>
+          </div>
+        )}
       </div>
     </main>
   )
