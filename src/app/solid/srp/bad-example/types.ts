@@ -1,11 +1,11 @@
-export interface User {
-  id: number
+export type User = {
+  id: string
   name: string
   email: string
   image: string
 }
 
-export interface LinkHeader {
+export type LinkHeader = {
   first?: string
   last?: string
   prev?: string

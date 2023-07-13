@@ -8,62 +8,41 @@
  */
 
 import Image from 'next/image'
-import { useCallback, useEffect, useReducer, useState } from 'react'
-import { LinkHeader, User } from '../types'
+import { useCallback, useEffect, useState } from 'react'
+import { LinkHeader, User } from './types'
 
-function parseLinkHeader(header: string): LinkHeader {
-  if (!header) {
-    return {}
-  }
-
-  const parts = header.split(',')
-  const links: Record<string, string> = {}
-
-  for (const part of parts) {
-    const section = part.split(';')
-
-    if (section.length !== 2) {
-      throw new Error('section could not be split on ";"')
-    }
-
-    const url = section[0].replace(/<(.*)>/, '$1').trim()
-    const name = section[1].replace(/rel="(.*)"/, '$1').trim()
-
-    links[name] = url
-  }
-
-  return links
-}
-
-const paginationReducer = (
-  state: { page: number; search: string },
-  action: { type: 'next' | 'search'; payload?: string },
-) => {
-  switch (action.type) {
-    case 'next':
-      return { ...state, page: state.page + 1 }
-    case 'search':
-      return { ...state, page: 1, search: action.payload ?? '' }
-    default:
-      throw new Error('Invalid action type')
-  }
-}
-
-const Page = () => {
+export default function Page() {
   const [users, setUsers] = useState<User[]>([])
-
-  const [pagination, dispatchPagination] = useReducer(paginationReducer, {
-    page: 1,
-    search: '',
-  })
-
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
+
   const [hasNextPage, setHasNextPage] = useState(false)
 
-  const fetchUsers = useCallback(async () => {
-    const { page, search } = pagination
+  const parseLinkHeader = (header: string): LinkHeader => {
+    if (!header) {
+      return {}
+    }
 
+    const parts = header.split(',')
+    const links: Record<string, string> = {}
+
+    for (const part of parts) {
+      const section = part.split(';')
+
+      if (section.length !== 2) {
+        throw new Error('section could not be split on ";"')
+      }
+
+      const url = section[0].replace(/<(.*)>/, '$1').trim()
+      const name = section[1].replace(/rel="(.*)"/, '$1').trim()
+
+      links[name] = url
+    }
+
+    return links
+  }
+
+  const fetchUsers = useCallback(async () => {
     const url = `http://localhost:3001/users?_sort=name&_page=${page}&name_like=${search}`
 
     const response = await fetch(url)
@@ -86,7 +65,7 @@ const Page = () => {
     }
 
     setHasNextPage(!!linkHeader.next)
-  }, [pagination])
+  }, [search, page])
 
   useEffect(() => {
     fetchUsers()
@@ -102,10 +81,8 @@ const Page = () => {
             type="search"
             placeholder="Search"
             onChange={(event) => {
-              dispatchPagination({
-                type: 'search',
-                payload: event.target.value,
-              })
+              setSearch(event.target.value)
+              setPage(1)
             }}
             className="w-full rounded border border-slate-200 bg-white/90 p-2 outline-none placeholder:text-slate-300 focus:outline-slate-300"
           />
@@ -138,7 +115,7 @@ const Page = () => {
               type="button"
               className="rounded-md bg-emerald-500 px-4 py-2 text-slate-50 hover:bg-emerald-700"
               onClick={() => {
-                dispatchPagination({ type: 'next' })
+                setPage((currentPage) => currentPage + 1)
               }}
             >
               Load more
@@ -149,5 +126,3 @@ const Page = () => {
     </main>
   )
 }
-
-export default Page
