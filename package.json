@@ -9,7 +9,7 @@
     "lint": "next lint",
     "format": "prettier --write \"./src/**/*.{ts,tsx,json,md}\"",
     "generate:db": "ts-node ./cli/generate-db.ts",
-    "server": "json-server --watch db.json --port 3001"
+    "api": "json-server --watch db.json --port 3001"
   },
   "dependencies": {
     "@types/node": "20.3.3",
