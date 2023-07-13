@@ -18,7 +18,7 @@ import { User } from '../types'
 const ENDPOINT = 'http://localhost:3001/users'
 
 export const useUsers = () => {
-  const [pagination, paginationDispatch] = useReducer(paginationReducer, {
+  const [pagination, dispatch] = useReducer(paginationReducer, {
     page: 1,
     search: '',
     users: [],
@@ -26,13 +26,13 @@ export const useUsers = () => {
   })
 
   const handleLoadMore = useCallback(() => {
-    paginationDispatch({
+    dispatch({
       type: 'LOAD_MORE',
     })
   }, [])
 
   const handleSearch = useCallback((search: string) => {
-    paginationDispatch({
+    dispatch({
       type: 'SEARCH',
       payload: search,
     })
@@ -46,14 +46,14 @@ export const useUsers = () => {
     fetch(url, { signal: controller.signal })
       .then((response) => {
         const linkHeader = parseLinkHeader(response.headers.get('link') ?? '')
-        paginationDispatch({
+        dispatch({
           type: 'SET_HAS_NEXT_PAGE',
           payload: !!linkHeader.next,
         })
         return response.json()
       })
       .then((users: User[]) => {
-        paginationDispatch({
+        dispatch({
           type: 'SET_USERS',
           payload: users,
         })
