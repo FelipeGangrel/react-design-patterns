@@ -10,6 +10,7 @@
 import Image from 'next/image'
 import { useCallback, useEffect, useState } from 'react'
 import { LinkHeader, User } from './types'
+import Link from 'next/link'
 
 export default function Page() {
   const [users, setUsers] = useState<User[]>([])
@@ -75,6 +76,10 @@ export default function Page() {
     <main className="min-h-screen bg-slate-50 px-6">
       <div className="relative mx-auto max-w-[800px]">
         <header className="sticky top-0 flex flex-col gap-4 bg-gradient-to-b from-slate-50 from-60% pb-6 pt-4">
+          <div className="flex flex-row justify-center gap-2 text-rose-600">
+            <Link href="/solid/srp/good-example">Good Example</Link>
+            <Link href="/solid/srp/bad-example">Bad Example</Link>
+          </div>
           <h1 className="text-lg font-bold">Users</h1>
           <input
             name="search"
@@ -113,7 +118,7 @@ export default function Page() {
           <div className="sticky bottom-0 flex flex-row items-center justify-center bg-gradient-to-t from-slate-50 from-20% py-4">
             <button
               type="button"
-              className="rounded-md bg-emerald-500 px-4 py-2 text-slate-50 hover:bg-emerald-700"
+              className="rounded-md bg-rose-500 px-4 py-2 text-slate-50 hover:bg-rose-700"
               onClick={() => {
                 setPage((currentPage) => currentPage + 1)
               }}
