@@ -1,3 +1,7 @@
+/**
+ * Parses a link header and returns an object with refs as keys and urls as values.
+ */
+
 import type { LinkHeader } from '../types'
 
 export function parseLinkHeader(header: string): LinkHeader {

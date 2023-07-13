@@ -1,3 +1,15 @@
+/**
+ * This hook is responsible for fetching users from the API.
+ *
+ * It uses the pagination reducer to manage the state of the users.
+ * It also uses the parseLinkHeader function to parse the link header
+ * from the API response.
+ *
+ * The fetchUsers function is responsible for fetching the users from the API.
+ * It uses the AbortController to abort the fetch request when the component
+ * is unmounted.
+ */
+
 import { useCallback, useEffect, useReducer } from 'react'
 import { paginationReducer } from '../reducers'
 import { parseLinkHeader } from '../utils'

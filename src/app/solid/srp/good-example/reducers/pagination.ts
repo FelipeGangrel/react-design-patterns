@@ -1,3 +1,16 @@
+/**
+ * This file contains the reducer for the pagination state.
+ *
+ * The pagination state is responsible for managing the page, search, users and hasNextPage properties.
+ *
+ * The reducer handles the following actions:
+ * - LOAD_MORE: Increments the page by 1.
+ * - SEARCH: Sets the page to 1 and sets the search property.
+ * - SET_USERS: Sets the users property.
+ * - SET_HAS_NEXT_PAGE: Sets the hasNextPage property.
+ *
+ */
+
 import type { User } from '../types'
 
 type PaginationState = {
