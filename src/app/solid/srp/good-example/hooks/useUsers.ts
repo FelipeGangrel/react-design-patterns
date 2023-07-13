@@ -13,10 +13,25 @@ export const useUsers = () => {
     hasNextPage: false,
   })
 
-  const fetchUsers = useCallback(() => {
+  const handleLoadMore = useCallback(() => {
+    paginationDispatch({
+      type: 'LOAD_MORE',
+    })
+  }, [])
+
+  const handleSearch = useCallback((search: string) => {
+    paginationDispatch({
+      type: 'SEARCH',
+      payload: search,
+    })
+  }, [])
+
+  const fetchUsers = useCallback((): AbortController => {
     const url = `${ENDPOINT}?_sort=name&_page=${pagination.page}&name_like=${pagination.search}`
 
-    fetch(url)
+    const controller = new AbortController()
+
+    fetch(url, { signal: controller.signal })
       .then((response) => {
         const linkHeader = parseLinkHeader(response.headers.get('link') ?? '')
         paginationDispatch({
@@ -31,23 +46,16 @@ export const useUsers = () => {
           payload: users,
         })
       })
+
+    return controller
   }, [pagination.page, pagination.search])
 
-  const handleLoadMore = useCallback(() => {
-    paginationDispatch({
-      type: 'LOAD_MORE',
-    })
-  }, [])
-
-  const handleSearch = useCallback((search: string) => {
-    paginationDispatch({
-      type: 'SEARCH',
-      payload: search,
-    })
-  }, [])
-
   useEffect(() => {
-    fetchUsers()
+    const controller = fetchUsers()
+
+    return () => {
+      controller.abort()
+    }
   }, [fetchUsers])
 
   return {
