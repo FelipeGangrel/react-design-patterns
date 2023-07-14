@@ -210,11 +210,6 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@phosphor-icons/react@^2.0.10":
-  version "2.0.10"
-  resolved "https://registry.yarnpkg.com/@phosphor-icons/react/-/react-2.0.10.tgz#dcf2f6dabd42bf9156be38caf59d4c818af2b817"
-  integrity sha512-q5ITPNFhmEiYZLZOvEhjo2phlfxoOmit7vE1tBYMxcMqnZX2vdbMw3deDE7wCegpBKM/q/p39BJmhhoPcjZyCg==
-
 "@pkgr/utils@^2.3.1":
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/@pkgr/utils/-/utils-2.4.1.tgz#adf291d0357834c410ce80af16e711b56c7b1cd3"
@@ -2780,6 +2775,11 @@ react-dom@18.2.0:
   dependencies:
     loose-envify "^1.1.0"
     scheduler "^0.23.0"
+
+react-icons@^4.10.1:
+  version "4.10.1"
+  resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-4.10.1.tgz#3f3b5eec1f63c1796f6a26174a1091ca6437a500"
+  integrity sha512-/ngzDP/77tlCfqthiiGNZeYFACw85fUjZtLbedmJ5DTlNDIwETxhwBzdOJ21zj4iJdvc0J3y7yOsX3PpxAJzrw==
 
 react-is@^16.13.1:
   version "16.13.1"
