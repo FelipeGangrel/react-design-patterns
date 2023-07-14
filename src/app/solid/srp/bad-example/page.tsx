@@ -4,7 +4,7 @@
  * SRP - Single Responsibility Principle
  * Bad Example
  *
- * This component is doing too much. It is fetching data, parsing data, and rendering data.
+ * This component is doing too much. It is fetching, parsing and displaying data.
  */
 
 import Image from 'next/image'
@@ -16,7 +16,6 @@ export default function Page() {
   const [users, setUsers] = useState<User[]>([])
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
-
   const [hasNextPage, setHasNextPage] = useState(false)
 
   const parseLinkHeader = (header: string): LinkHeader => {
