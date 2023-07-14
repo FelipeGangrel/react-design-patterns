@@ -53,7 +53,7 @@ Good Example in [src/app/solid/srp/good-example](src/app/solid/srp/good-example/
 
 Soon
 
-### Listov Substitution Principle examples
+### Liskov Substitution Principle examples
 
 Soon
 
