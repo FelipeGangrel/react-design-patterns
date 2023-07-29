@@ -40,7 +40,7 @@ yarn dev
 
 - [x] Single Responsibility Principle
 - [x] Open-Closed Principle
-- [ ] Liskov Substitution Principle
+- [x] Liskov Substitution Principle
 - [ ] Interface Segregation Principle
 - [ ] Dependency Inversion Principle
 
