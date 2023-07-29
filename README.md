@@ -60,7 +60,11 @@ Good Example in [src/app/solid/ocp/good-example](src/app/solid/ocp/good-example/
 
 ### Liskov Substitution Principle examples
 
-Soon
+Components should be replaceable with instances of their subtypes without altering
+the correctness of that program.
+
+Bad Example in [src/app/solid/lsp/bad-example](src/app/solid/lsp/bad-example/page.tsx)\
+Good Example in [src/app/solid/lsp/good-example](src/app/solid/lsp/good-example/page.tsx)
 
 ### Interface Segregation Principle examples
 
