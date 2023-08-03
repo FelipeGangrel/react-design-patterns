@@ -68,6 +68,8 @@ Good Example in [src/app/solid/lsp/good-example](src/app/solid/lsp/good-example/
 
 ### Interface Segregation Principle examples
 
+Components should not depend on properties that they do not use.
+
 Soon
 
 ### Dependency Inversion Principle examples
